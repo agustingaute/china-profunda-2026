@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>China Profunda 2026</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+
+<style>
+:root {
+  --ink: #0a0a0f;
+  --paper: #f5f0e8;
+  --gold: #c8a45a;
+  --gold-light: #e8d49a;
+  --terracotta: #c45d3e;
+  --jade: #4a8c6f;
+  --sky: #5b8fa8;
+  --rose: #c47a8a;
+  --ink-light: #1a1a24;
+  --ink-mid: #2a2a38;
+  --ink-soft: #8888a0;
+  --orange: #d4853a;
+  --green-miao: #5aab6e;
+  --blue-dong: #5a8ec4;
+  --pink-nature: #c47a9a;
+  --text-primary: #e8e4dc;
+  --text-secondary: #a8a498;
+  --text-muted: #68686c;
+  --font-display: 'Playfair Display', 'Noto Serif SC', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, sans-serif;
+  --font-chinese: 'Noto Serif SC', serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--ink);
+  color: var(--text-primary);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* === GRAIN OVERLAY === */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* === UTILITY === */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+.section-label {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 1.5rem;
+}
+.divider {
+  width: 60px;
+  height: 1px;
+  background: var(--gold);
+  margin: 3rem 0;
+}
+
+/* === HERO === */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  padding: 4rem 2rem;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(200,164,90,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 20% 80%, rgba(196,93,62,0.04) 0%, transparent 60%),
+    var(--ink);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(10,10,15,0.3) 100%),
+    repeating-linear-gradient(90deg, transparent, transparent 119px, rgba(200,164,90,0.03) 119px, rgba(200,164,90,0.03) 120px);
+  pointer-events: none;
+}
+.hero-chinese {
+  font-family: var(--font-chinese);
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  color: var(--gold);
+  letter-spacing: 0.5em;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.2s ease forwards;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  margin-bottom: 0.3em;
+  opacity: 0;
+  animation: fadeUp 1s 0.4s ease forwards;
+}
+.hero h1 span {
+  display: block;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.4em;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-top: 0.3em;
+}
+.hero-year {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  font-weight: 300;
+  color: var(--text-secondary);
+  letter-spacing: 0.3em;
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.6s ease forwards;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeUp 1s 0.8s ease forwards;
+}
+.hero-stat {
+  text-align: center;
+}
+.hero-stat-number {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+}
+.hero-stat-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-top: 0.3rem;
+}
+
+.hero-scroll {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0;
+  animation: fadeUp 1s 1.2s ease forwards;
+}
+.hero-scroll::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  margin: 0.5rem auto 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* === ROUTE === */
+.route-section {
+  padding: 6rem 0;
+  background: var(--ink-light);
+  border-top: 1px solid rgba(200,164,90,0.1);
+  border-bottom: 1px solid rgba(200,164,90,0.1);
+}
+.route-scroll {
+  overflow-x: auto;
+  padding: 2rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) var(--ink-mid);
+}
+.route-scroll::-webkit-scrollbar { height: 4px; }
+.route-scroll::-webkit-scrollbar-track { background: var(--ink-mid); }
+.route-scroll::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+.route-track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-width: max-content;
+  padding: 1rem 0;
+}
+.route-stop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 140px;
+}
+.route-stop-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 20px rgba(200,164,90,0.3);
+  position: relative;
+}
+.route-stop-dot::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+.route-stop-name {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--paper);
+}
+.route-stop-dates {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+.route-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 120px;
+  padding: 0 0.5rem;
+}
+.route-connector-line {
+  width: 100%;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, var(--gold) 0, var(--gold) 8px, transparent 8px, transparent 14px);
+}
+.route-connector-icon {
+  font-size: 1.2rem;
+  filter: grayscale(0.2);
+}
+.route-connector-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* === MAP === */
+.map-section { padding: 6rem 0; }
+#map {
+  height: 550px;
+  border-radius: 8px;
+  border: 1px solid rgba(200,164,90,0.15);
+  margin-top: 2rem;
+  z-index: 1;
+}
+.map-legend {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  padding: 1rem 0;
+}
+.map-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.map-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* === DESTINATIONS === */
+.destinations { padding: 4rem 0; }
+.dest-block {
+  margin-bottom: 6rem;
+  border-top: 1px solid rgba(200,164,90,0.15);
+  padding-top: 3rem;
+}
+.dest-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+.dest-number {
+  font-family: var(--font-display);
+  font-size: 5rem;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(200,164,90,0.1);
+  font-style: italic;
+}
+.dest-name {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: var(--paper);
+}
+.dest-dates-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  border: 1px solid rgba(200,164,90,0.3);
+  padding: 0.3rem 0.8rem;
+  border-radius: 2px;
+  margin-top: 0.5rem;
+}
+.dest-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.dest-tag {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: 2px;
+  background: rgba(200,164,90,0.08);
+  color: var(--gold-light);
+  border: 1px solid rgba(200,164,90,0.12);
+}
+
+/* Gallery */
+.dest-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+.dest-gallery-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(200,164,90,0.1);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+}
+.dest-gallery-img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+
+/* Accordion days */
+.day-accordion { margin-bottom: 0.5rem; }
+.day-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(200,164,90,0.08);
+  transition: border-color 0.3s;
+  user-select: none;
+}
+.day-header:hover { border-bottom-color: rgba(200,164,90,0.2); }
+.day-badge {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--gold);
+  min-width: 70px;
+  flex-shrink: 0;
+}
+.day-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  min-width: 60px;
+  flex-shrink: 0;
+}
+.day-summary {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  flex: 1;
+}
+.day-toggle {
+  font-size: 1.2rem;
+  color: var(--gold);
+  transition: transform 0.3s;
+  flex-shrink: 0;
+}
+.day-accordion.open .day-toggle { transform: rotate(45deg); }
+.day-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.4s ease;
+}
+.day-accordion.open .day-content {
+  max-height: 500px;
+  padding: 1rem 0 1rem 70px;
+}
+.day-content p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+/* === TRANSPORT TABLE === */
+.transport-section {
+  padding: 6rem 0;
+  background: var(--ink-light);
+  border-top: 1px solid rgba(200,164,90,0.1);
+  border-bottom: 1px solid rgba(200,164,90,0.1);
+}
+.transport-table-wrap {
+  overflow-x: auto;
+  margin-top: 2rem;
+  border-radius: 4px;
+  border: 1px solid rgba(200,164,90,0.12);
+}
+.transport-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.transport-table thead {
+  background: rgba(200,164,90,0.06);
+}
+.transport-table th {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 1rem;
+  text-align: left;
+  white-space: nowrap;
+}
+.transport-table td {
+  padding: 0.9rem 1rem;
+  border-top: 1px solid rgba(200,164,90,0.06);
+  color: var(--text-secondary);
+  vertical-align: top;
+}
+.transport-table tr:hover td {
+  background: rgba(200,164,90,0.03);
+  color: var(--text-primary);
+}
+.transport-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* === CHECKLIST === */
+.checklist-section { padding: 6rem 0; }
+.checklist-group {
+  margin-bottom: 2.5rem;
+}
+.checklist-group-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.checklist-group-title.urgent { color: var(--terracotta); }
+.checklist-group-title.important { color: var(--gold); }
+.checklist-group-title.before { color: var(--jade); }
+
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 0.6rem 0;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+.checklist-item.checked { opacity: 0.4; }
+.checklist-item.checked .checklist-text { text-decoration: line-through; }
+
+.checklist-box {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--ink-soft);
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.3s, background 0.3s;
+}
+.checklist-item.checked .checklist-box {
+  border-color: var(--gold);
+  background: var(--gold);
+}
+.checklist-box svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.checklist-item.checked .checklist-box svg { opacity: 1; }
+.checklist-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  transition: color 0.3s;
+}
+.checklist-item:hover .checklist-text { color: var(--text-primary); }
+
+/* === FOOTER === */
+footer {
+  padding: 4rem 2rem;
+  text-align: center;
+  border-top: 1px solid rgba(200,164,90,0.1);
+}
+footer p {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+footer .footer-dates {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+footer .footer-tagline {
+  font-style: italic;
+  color: var(--text-secondary);
+  margin-top: 1rem;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .hero-stats { gap: 1.5rem; }
+  .dest-header { grid-template-columns: 1fr; }
+  .dest-number { font-size: 3rem; }
+  .route-stop { min-width: 110px; }
+  .route-connector { min-width: 80px; }
+  .day-accordion.open .day-content { padding-left: 0; }
+  .dest-gallery { grid-template-columns: 1fr 1fr; }
+  #map { height: 400px; }
+}
+@media (max-width: 480px) {
+  .dest-gallery { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 2.8rem; }
+}
+
+/* Leaflet overrides */
+.leaflet-popup-content-wrapper {
+  background: var(--ink-light) !important;
+  color: var(--text-primary) !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(200,164,90,0.2) !important;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
+}
+.leaflet-popup-tip { background: var(--ink-light) !important; }
+.leaflet-popup-content { font-family: var(--font-body) !important; font-size: 0.85rem !important; }
+.leaflet-popup-content strong { color: var(--gold); font-family: var(--font-display); font-size: 1rem; }
+.leaflet-popup-content .popup-dates { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+.leaflet-popup-content .popup-desc { margin-top: 6px; color: var(--text-secondary); line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <p class="hero-chinese">深入中国</p>
+  <h1>China<br>Profunda<span>Un viaje al corazón del sureste</span></h1>
+  <p class="hero-year">— 2026 —</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-number">19</div>
+      <div class="hero-stat-label">Días</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number">4</div>
+      <div class="hero-stat-label">Destinos</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number">8</div>
+      <div class="hero-stat-label">Pueblos Étnicos</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number">3</div>
+      <div class="hero-stat-label">Trenes Nocturnos</div>
+    </div>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<!-- ===================== ROUTE ===================== -->
+<section class="route-section">
+  <div class="container">
+    <p class="section-label">La ruta</p>
+    <h2 class="section-title">De la metrópolis a las montañas</h2>
+    <div class="route-scroll">
+      <div class="route-track">
+        <!-- Shanghai -->
+        <div class="route-stop">
+          <div class="route-stop-name">Shanghai</div>
+          <div class="route-stop-dot"></div>
+          <div class="route-stop-dates">26 – 29 sept</div>
+        </div>
+        <div class="route-connector">
+          <div class="route-connector-icon">🚂</div>
+          <div class="route-connector-line"></div>
+          <div class="route-connector-label">Tren nocturno · 10h</div>
+        </div>
+        <!-- Guizhou -->
+        <div class="route-stop">
+          <div class="route-stop-name">Guizhou</div>
+          <div class="route-stop-dot"></div>
+          <div class="route-stop-dates">30 sept – 5 oct</div>
+        </div>
+        <div class="route-connector">
+          <div class="route-connector-icon">🚂</div>
+          <div class="route-connector-line"></div>
+          <div class="route-connector-label">Tren diurno · 6h</div>
+        </div>
+        <!-- Hong Kong -->
+        <div class="route-stop">
+          <div class="route-stop-name">Hong Kong</div>
+          <div class="route-stop-dot"></div>
+          <div class="route-stop-dates">5 – 9 oct</div>
+        </div>
+        <div class="route-connector">
+          <div class="route-connector-icon">🚂</div>
+          <div class="route-connector-line"></div>
+          <div class="route-connector-label">Tren sleeper · 11h</div>
+        </div>
+        <!-- Beijing -->
+        <div class="route-stop">
+          <div class="route-stop-name">Beijing</div>
+          <div class="route-stop-dot"></div>
+          <div class="route-stop-dates">10 – 13 oct</div>
+        </div>
+        <div class="route-connector">
+          <div class="route-connector-icon">🚂</div>
+          <div class="route-connector-line"></div>
+          <div class="route-connector-label">Tren nocturno · 5.5h</div>
+        </div>
+        <!-- Shanghai return -->
+        <div class="route-stop">
+          <div class="route-stop-name">Shanghai</div>
+          <div class="route-stop-dot"></div>
+          <div class="route-stop-dates">14 oct</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MAP ===================== -->
+<section class="map-section">
+  <div class="container">
+    <p class="section-label">Mapa interactivo</p>
+    <h2 class="section-title">Todos los puntos del viaje</h2>
+    <div id="map"></div>
+    <div class="map-legend">
+      <div class="map-legend-item">
+        <div class="map-legend-dot" style="background: var(--orange);"></div>
+        Ciudades principales
+      </div>
+      <div class="map-legend-item">
+        <div class="map-legend-dot" style="background: var(--green-miao);"></div>
+        Pueblos Miao
+      </div>
+      <div class="map-legend-item">
+        <div class="map-legend-dot" style="background: var(--blue-dong);"></div>
+        Pueblos Dong
+      </div>
+      <div class="map-legend-item">
+        <div class="map-legend-dot" style="background: var(--pink-nature);"></div>
+        Naturaleza / Terrazas
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DESTINATIONS ===================== -->
+<section class="destinations">
+  <div class="container">
+
+    <!-- SHANGHAI -->
+    <div class="dest-block" id="shanghai">
+      <div class="dest-header">
+        <div>
+          <div class="dest-number">01</div>
+          <div class="dest-name">Shanghai</div>
+          <div class="dest-dates-badge">26 – 29 sept · 3 noches</div>
+        </div>
+      </div>
+      <div class="dest-tags">
+        <span class="dest-tag">Metrópolis</span>
+        <span class="dest-tag">Art Deco</span>
+        <span class="dest-tag">Gastronomía</span>
+        <span class="dest-tag">The Bund</span>
+      </div>
+      <div class="dest-gallery">
+        <img class="dest-gallery-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Pudong_Skyline_at_night.JPG/1280px-Pudong_Skyline_at_night.JPG" alt="The Bund de noche" loading="lazy">
+        <img class="dest-gallery-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Shanghai%2C_Yu_Yuan.JPG/1280px-Shanghai%2C_Yu_Yuan.JPG" alt="Yu Garden" loading="lazy">
+        <img class="dest-gallery-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Nanjing_Road%2C_Shanghai.JPG/1280px-Nanjing_Road%2C_Shanghai.JPG" alt="Nanjing Road" loading="lazy">
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 1</span>
+          <span class="day-date">26 sept</span>
+          <span class="day-summary">Llegada a Pudong. El Bund de noche.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Llegada al aeropuerto de Pudong. Traslado al hotel. Si llegás antes de las 20h, caminata al Bund para ver el skyline de Lujiazui iluminado — primera impresión imborrable de Shanghai.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 2</span>
+          <span class="day-date">27 sept</span>
+          <span class="day-summary">French Concession, Tianzifang, Yu Garden.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Mañana en la French Concession — calles arboladas con plátanos, cafés escondidos, arquitectura art deco. Parada en Tianzifang para artesanías. Tarde: Yu Garden y la Old City con sus techos curvos y mercados bulliciosos.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 3</span>
+          <span class="day-date">28 sept</span>
+          <span class="day-summary">Museo de Shanghai, Xintiandi, Nanjing Road.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Museo de Shanghai para contexto cultural antes de entrar a Guizhou. Xintiandi para almorzar — shikumen restaurados. Tarde: Nanjing Road, la peatonal más famosa de China.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 4</span>
+          <span class="day-date">29 sept</span>
+          <span class="day-summary">Día libre. Tren nocturno a Guiyang.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Día libre para explorar lo que quedó pendiente o simplemente dejarse perder. A la noche, tren nocturno ~21h hacia Guiyang — dormir con el tren en movimiento, despertar en otra China.</p></div>
+      </div>
+    </div>
+
+    <!-- GUIZHOU -->
+    <div class="dest-block" id="guizhou">
+      <div class="dest-header">
+        <div>
+          <div class="dest-number">02</div>
+          <div class="dest-name">Guizhou</div>
+          <div class="dest-dates-badge">30 sept – 5 oct · 6 días</div>
+        </div>
+      </div>
+      <div class="dest-tags">
+        <span class="dest-tag">Pueblos Miao</span>
+        <span class="dest-tag">Pueblos Dong</span>
+        <span class="dest-tag">Terrazas de Arroz</span>
+        <span class="dest-tag">Golden Week</span>
+        <span class="dest-tag">Conductor Privado</span>
+      </div>
+      <div class="dest-gallery">
+        <img class="dest-gallery-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Xijiang_Guizhou_Evening.jpeg/1280px-Xijiang_Guizhou_Evening.jpeg" alt="Xijiang Miao Village" loading="lazy">
+        <img class="dest-gallery-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Zhaoxing_at_night.jpg/1280px-Zhaoxing_at_night.jpg" alt="Zhaoxing Dong Village" loading="lazy">
+        <img class="dest-gallery-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Danjiang%2C_Miao_village%2C_women_at_festival_%2840917045964%29.jpg/1280px-Danjiang%2C_Miao_village%2C_women_at_festival_%2840917045964%29.jpg" alt="Festival Miao" loading="lazy">
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 5</span>
+          <span class="day-date">30 sept</span>
+          <span class="day-summary">Llegada Guiyang → Xijiang en conductor privado.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Llegada a Guiyang ~7am. Conductor privado directo a Xijiang Miao Village (~3h por montaña). Check-in en guesthouse con vista al valle. Tarde libre para perderse por las calles empedradas del pueblo más grande de los Miao — mil casas de madera escalonadas sobre la ladera.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 6</span>
+          <span class="day-date">1 oct</span>
+          <span class="day-summary">Amanecer Xijiang → Longtang → Langde Upper Village.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Amanecer desde el mirador de Xijiang — niebla entre las casas de madera. Conductor a Longtang, un pueblo sin turistas en ruta. Luego Langde Upper Miao Village, uno de los más auténticos de la región. Regreso a Xijiang para la noche.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 7</span>
+          <span class="day-date">2 oct</span>
+          <span class="day-summary">Xijiang → Jiabang Rice Terraces. Atardecer dorado.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Mañana libre en Xijiang. Mediodía: conductor a Jiabang Rice Terraces (~3h). Llegada para el atardecer entre las terrazas doradas de octubre — posiblemente el momento más fotogénico del viaje. Noche en Jiabang, pueblo mínimo entre arrozales.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 8</span>
+          <span class="day-date">3 oct</span>
+          <span class="day-summary">Amanecer Jiabang → Zhaoxing Dong Village.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Amanecer en Jiabang — niebla subiendo entre los arrozales. Día completo entre las terrazas. Tarde: conductor a Zhaoxing Dong Village (~3h), el pueblo Dong más grande de Guizhou con cinco torres de tambor. Noche en Zhaoxing.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 9</span>
+          <span class="day-date">4 oct</span>
+          <span class="day-summary">Biasha Miao Village. Tarde libre en Zhaoxing.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Conductor a Biasha Miao Village (~1h) — el último pueblo armado de China, conocido por sus guerreros con rifles. Regreso a Zhaoxing. Tarde libre: cinco torres de tambor, puentes cubiertos Wind-and-Rain, artesanías índigo.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 10</span>
+          <span class="day-date">5 oct</span>
+          <span class="day-summary">Amanecer → Tang'an → Tren a Hong Kong.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Amanecer en Zhaoxing. Caminata a Tang'an (8km por terrazas y pueblitos). 10-11am: conductor a Congjiang Station (~1h). Tren Congjiang → Guilin → Guangzhou → Hong Kong West Kowloon. Llegada HK ~17h. Fin de Guizhou, comienzo de la ciudad vertical.</p></div>
+      </div>
+    </div>
+
+    <!-- HONG KONG -->
+    <div class="dest-block" id="hongkong">
+      <div class="dest-header">
+        <div>
+          <div class="dest-number">03</div>
+          <div class="dest-name">Hong Kong</div>
+          <div class="dest-dates-badge">5 – 9 oct · 4 noches</div>
+        </div>
+      </div>
+      <div class="dest-tags">
+        <span class="dest-tag">Skyline</span>
+        <span class="dest-tag">Dim Sum</span>
+        <span class="dest-tag">Islas</span>
+        <span class="dest-tag">Street Food</span>
+        <span class="dest-tag">Kowloon</span>
+      </div>
+      <div class="dest-gallery">
+        <img class="dest-gallery-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Hong-Kong_skyline.JPG/1280px-Hong-Kong_skyline.JPG" alt="Hong Kong skyline" loading="lazy">
+        <img class="dest-gallery-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Tian_Tan_Buddha_August_2013.JPG/1280px-Tian_Tan_Buddha_August_2013.JPG" alt="Big Buddha Lantau" loading="lazy">
+        <img class="dest-gallery-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/HK_YMT_%E6%B2%B9%E9%BA%BB%E5%9C%B0_Yau_Ma_Tei_%E5%BB%9F%E8%A1%97_Temple_Street_night_market_August_2021_SS2_12.jpg/1280px-HK_YMT_%E6%B2%B9%E9%BA%BB%E5%9C%B0_Yau_Ma_Tei_%E5%BB%9F%E8%A1%97_Temple_Street_night_market_August_2021_SS2_12.jpg" alt="Temple Street Night Market" loading="lazy">
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 11</span>
+          <span class="day-date">5 oct</span>
+          <span class="day-summary">Llegada tarde. Cena en Temple Street o Tsim Sha Tsui.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Llegada desde Guizhou ~17h. Check-in en Kowloon. Primera cena en Hong Kong: Temple Street Night Market o el waterfront de Tsim Sha Tsui con vista al skyline de Central iluminado.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 12</span>
+          <span class="day-date">6 oct</span>
+          <span class="day-summary">The Peak, Hollywood Road, SoHo, Man Mo Temple.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>The Peak de mañana temprano para evitar multitudes y tener luz limpia sobre el skyline. Bajada a Hollywood Road — galerías, antigüedades, Man Mo Temple. SoHo para almorzar. Tarde: Central y waterfront.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 13</span>
+          <span class="day-date">7 oct</span>
+          <span class="day-summary">Lamma Island o Lantau + Big Buddha.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Día de naturaleza y contraste. Opción A: Lamma Island para playas y mariscos. Opción B: Lantau — Ngong Ping 360 cable car + Big Buddha + Po Lin Monastery. Elegir según el clima.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 14</span>
+          <span class="day-date">8 oct</span>
+          <span class="day-summary">Kowloon profundo. Mong Kok, jade, dim sum.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Kowloon profundo: Mong Kok con sus mercados verticales, mercado de jade. Temple Street de noche — el mejor cierre. Mejor dim sum del viaje en algún local clásico de Kowloon.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 15</span>
+          <span class="day-date">9 oct</span>
+          <span class="day-summary">Día comodín. Tren sleeper a Beijing de noche.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Día libre / comodín — Sai Kung si queda energía, o un día tranquilo de cierre en HK. Preparación para la última etapa. Noche: tren sleeper G897 desde West Kowloon a las 20:13h → Beijing. Despertar en la capital.</p></div>
+      </div>
+    </div>
+
+    <!-- BEIJING -->
+    <div class="dest-block" id="beijing">
+      <div class="dest-header">
+        <div>
+          <div class="dest-number">04</div>
+          <div class="dest-name">Beijing</div>
+          <div class="dest-dates-badge">10 – 14 oct · 4 días</div>
+        </div>
+      </div>
+      <div class="dest-tags">
+        <span class="dest-tag">Gran Muralla</span>
+        <span class="dest-tag">Ciudad Prohibida</span>
+        <span class="dest-tag">Hutongs</span>
+        <span class="dest-tag">Templo del Cielo</span>
+        <span class="dest-tag">Arte 798</span>
+      </div>
+      <div class="dest-gallery">
+        <img class="dest-gallery-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Forbidden_City_Panorama_1.jpg/1280px-Forbidden_City_Panorama_1.jpg" alt="Ciudad Prohibida panorama" loading="lazy">
+        <img class="dest-gallery-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Great_Wall_of_China_at_Mutianyu.JPG/1280px-Great_Wall_of_China_at_Mutianyu.JPG" alt="Gran Muralla Mutianyu" loading="lazy">
+        <img class="dest-gallery-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Temple_of_Heaven_-_Hall_of_Prayer_for_Good_Harvests.jpg/1280px-Temple_of_Heaven_-_Hall_of_Prayer_for_Good_Harvests.jpg" alt="Templo del Cielo" loading="lazy">
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 16</span>
+          <span class="day-date">10 oct</span>
+          <span class="day-summary">Llegada 7:12am. Hutongs en bici.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Llegada a Beijing a las 7:12am desde el tren sleeper. Check-in, descanso breve. Tarde: hutongs en bici — Nanluoguxiang o Shichahai. Callejones grises, puertas rojas, contraste total con Shanghai y Guizhou.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 17</span>
+          <span class="day-date">11 oct</span>
+          <span class="day-summary">Ciudad Prohibida + Tiananmen + Parque Jingshan.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Ciudad Prohibida + Tiananmen de mañana temprano (reserva online con pasaporte obligatoria). Tarde: Parque Jingshan para la foto aérea clásica de la Ciudad Prohibida — todo el eje imperial se revela desde la colina.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 18</span>
+          <span class="day-date">12 oct</span>
+          <span class="day-summary">Gran Muralla — Mutianyu. Cable car + tobogán.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Día completo en la Gran Muralla, sección Mutianyu. Cable car para subir, tobogán para bajar. Menos turistas que Badaling, más espectacular. Llevar comida — no hay mucho arriba.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 19</span>
+          <span class="day-date">13 oct</span>
+          <span class="day-summary">Templo del Cielo, 798, Panjiayuan. Tren nocturno.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Mañana: Templo del Cielo — tai chi entre los árboles centenarios. Barrio 798 para arte contemporáneo. Tarde: mercado de Panjiayuan — antigüedades, caligrafía, últimas compras. Noche: tren nocturno Beijing → Shanghai.</p></div>
+      </div>
+      <div class="day-accordion">
+        <div class="day-header" onclick="toggleDay(this)">
+          <span class="day-badge">Día 20</span>
+          <span class="day-date">14 oct</span>
+          <span class="day-summary">Shanghai: día de cierre. Vuelo madrugada del 15.</span>
+          <span class="day-toggle">+</span>
+        </div>
+        <div class="day-content"><p>Llegada a Shanghai de mañana. Día tranquilo de cierre — última cena, compras finales, empacar memorias. Madrugada del 15: vuelo de regreso a casa.</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== TRANSPORT ===================== -->
+<section class="transport-section">
+  <div class="container">
+    <p class="section-label">Logística</p>
+    <h2 class="section-title">Transportes clave</h2>
+    <div class="transport-table-wrap">
+      <table class="transport-table">
+        <thead>
+          <tr>
+            <th>Ruta</th>
+            <th>Tipo</th>
+            <th>Fecha</th>
+            <th>Duración</th>
+            <th>Notas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Shanghai → Guiyang</strong></td>
+            <td><span class="transport-type">🚂 Tren nocturno</span></td>
+            <td>29 sept ~21h</td>
+            <td>~10h</td>
+            <td>Alarma compra: 14 sept 13:00hs ARG</td>
+          </tr>
+          <tr>
+            <td><strong>Guiyang → Xijiang</strong></td>
+            <td><span class="transport-type">🚗 Conductor privado</span></td>
+            <td>30 sept mañana</td>
+            <td>~3h</td>
+            <td>Reservar con anticipación — Golden Week</td>
+          </tr>
+          <tr>
+            <td><strong>Dentro de Guizhou</strong></td>
+            <td><span class="transport-type">🚗 Conductor privado</span></td>
+            <td>30 sept – 5 oct</td>
+            <td>Variable</td>
+            <td>Días 5–10 completos. Reservar ya.</td>
+          </tr>
+          <tr>
+            <td><strong>Zhaoxing → Hong Kong</strong></td>
+            <td><span class="transport-type">🚂 Tren diurno</span></td>
+            <td>5 oct ~11am</td>
+            <td>~6h</td>
+            <td>Vía Guilin y Guangzhou</td>
+          </tr>
+          <tr>
+            <td><strong>Hong Kong → Beijing</strong></td>
+            <td><span class="transport-type">🚂 Tren sleeper G897</span></td>
+            <td>9 oct 20:13h</td>
+            <td>~11h</td>
+            <td>Disponible desde 24 sept. Llegada 7:12am.</td>
+          </tr>
+          <tr>
+            <td><strong>Beijing → Shanghai</strong></td>
+            <td><span class="transport-type">🚂 Tren nocturno</span></td>
+            <td>13 oct noche</td>
+            <td>~5.5h</td>
+            <td>Última noche de trenes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CHECKLIST ===================== -->
+<section class="checklist-section">
+  <div class="container">
+    <p class="section-label">Preparación</p>
+    <h2 class="section-title">Checklist pre-viaje</h2>
+
+    <div class="checklist-group">
+      <div class="checklist-group-title urgent">🔴 Urgente — meses antes</div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="checklist-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checklist-text">Visado chino para los 3</span>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="checklist-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checklist-text">Conductor privado Guizhou (Golden Week — reservar ya)</span>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="checklist-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checklist-text">Alojamiento Xijiang, Jiabang, Zhaoxing</span>
+      </div>
+    </div>
+
+    <div class="checklist-group">
+      <div class="checklist-group-title important">🟡 Importante — semanas antes</div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="checklist-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checklist-text">Tren Shanghai → Guiyang — alarma 14 sept 13:00hs Argentina</span>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="checklist-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checklist-text">Tren HK → Beijing sleeper G897 — disponible desde 24 sept</span>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="checklist-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checklist-text">Reserva Ciudad Prohibida con pasaporte (online)</span>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="checklist-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checklist-text">Reserva Gran Muralla Mutianyu (online)</span>
+      </div>
+    </div>
+
+    <div class="checklist-group">
+      <div class="checklist-group-title before">🟢 Antes de salir</div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="checklist-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checklist-text">VPN instalada antes de llegar a China (ExpressVPN o NordVPN)</span>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="checklist-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checklist-text">Alipay con tarjeta internacional vinculada</span>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="checklist-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checklist-text">Trip.com con pasaportes cargados</span>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="checklist-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checklist-text">Amap + Didi instalados</span>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="checklist-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checklist-text">Seguro de viaje internacional</span>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="checklist-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checklist-text">PhotoPills para calcular amaneceres en Guizhou</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="container">
+    <p class="footer-dates">26 septiembre — 14 octubre 2026</p>
+    <p>Shanghai · Guizhou · Hong Kong · Beijing</p>
+    <p class="footer-tagline">Donde la China que imaginás termina y la real comienza.</p>
+  </div>
+</footer>
+
+<!-- ===================== SCRIPTS ===================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// === ACCORDION ===
+function toggleDay(header) {
+  const acc = header.parentElement;
+  acc.classList.toggle('open');
+}
+
+// === CHECKLIST ===
+function toggleCheck(item) {
+  item.classList.toggle('checked');
+  saveChecklist();
+}
+function saveChecklist() {
+  const items = document.querySelectorAll('.checklist-item');
+  const state = Array.from(items).map(i => i.classList.contains('checked'));
+  localStorage.setItem('china2026-checklist', JSON.stringify(state));
+}
+function loadChecklist() {
+  const saved = localStorage.getItem('china2026-checklist');
+  if (!saved) return;
+  const state = JSON.parse(saved);
+  const items = document.querySelectorAll('.checklist-item');
+  items.forEach((item, i) => {
+    if (state[i]) item.classList.add('checked');
+  });
+}
+loadChecklist();
+
+// === MAP ===
+const map = L.map('map', {
+  scrollWheelZoom: false,
+  zoomControl: true
+}).setView([28.5, 112], 5);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 18
+}).addTo(map);
+
+function createIcon(color) {
+  return L.divIcon({
+    html: '<div style="width:14px;height:14px;border-radius:50%;background:' + color + ';border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>',
+    className: '',
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+    popupAnchor: [0, -10]
+  });
+}
+
+const orange = '#d4853a';
+const green = '#5aab6e';
+const blue = '#5a8ec4';
+const pink = '#c47a9a';
+
+const places = [
+  { name: 'Shanghai', lat: 31.24, lng: 121.49, color: orange, dates: '26–29 sept / 14 oct', desc: 'Punto de partida y cierre. The Bund, French Concession, Yu Garden.' },
+  { name: 'Guiyang', lat: 26.56, lng: 107.98, color: orange, dates: '30 sept (tránsito)', desc: 'Llegada en tren nocturno. Conexión directa a Xijiang.' },
+  { name: 'Xijiang Miao Village', lat: 26.50, lng: 108.18, color: green, dates: '30 sept – 2 oct', desc: 'El pueblo Miao más grande — mil casas de madera escalonadas.' },
+  { name: 'Longtang Village', lat: 26.53, lng: 108.09, color: green, dates: '1 oct', desc: 'Pueblo sin turistas, parada en ruta.' },
+  { name: 'Langde Upper Miao Village', lat: 26.49, lng: 108.00, color: green, dates: '1 oct', desc: 'Uno de los pueblos Miao más auténticos.' },
+  { name: 'Jiabang Rice Terraces', lat: 25.60, lng: 108.60, color: pink, dates: '2–3 oct', desc: 'Terrazas de arroz doradas en octubre. Atardecer imperdible.' },
+  { name: 'Zhaoxing Dong Village', lat: 25.91, lng: 109.18, color: blue, dates: '3–5 oct', desc: 'El pueblo Dong más grande. Cinco torres de tambor, puentes cubiertos.' },
+  { name: 'Biasha Miao Village', lat: 25.84, lng: 108.82, color: green, dates: '4 oct', desc: 'El último pueblo armado de China.' },
+  { name: "Tang'an Village", lat: 25.93, lng: 109.22, color: blue, dates: '5 oct', desc: 'Caminata 8km desde Zhaoxing por terrazas.' },
+  { name: 'Guilin', lat: 24.47, lng: 111.30, color: orange, dates: '5 oct (tránsito)', desc: 'Parada en ruta Zhaoxing → Hong Kong.' },
+  { name: 'Hong Kong', lat: 22.30, lng: 114.17, color: orange, dates: '5–9 oct', desc: 'The Peak, Lantau, Kowloon, dim sum. Tren sleeper a Beijing.' },
+  { name: 'Beijing', lat: 39.91, lng: 116.39, color: orange, dates: '10–13 oct', desc: 'Ciudad Prohibida, Gran Muralla Mutianyu, Templo del Cielo, hutongs.' }
+];
+
+// Add markers
+places.forEach(p => {
+  L.marker([p.lat, p.lng], { icon: createIcon(p.color) })
+    .addTo(map)
+    .bindPopup('<strong>' + p.name + '</strong><div class="popup-dates">' + p.dates + '</div><div class="popup-desc">' + p.desc + '</div>');
+});
+
+// Route line
+const routeCoords = [
+  [31.24, 121.49],   // Shanghai
+  [26.56, 107.98],   // Guiyang
+  [26.50, 108.18],   // Xijiang
+  [26.53, 108.09],   // Longtang
+  [26.49, 108.00],   // Langde
+  [25.60, 108.60],   // Jiabang
+  [25.84, 108.82],   // Biasha
+  [25.91, 109.18],   // Zhaoxing
+  [25.93, 109.22],   // Tang'an
+  [24.47, 111.30],   // Guilin
+  [22.30, 114.17],   // Hong Kong
+  [39.91, 116.39],   // Beijing
+  [31.24, 121.49]    // Shanghai return
+];
+
+L.polyline(routeCoords, {
+  color: '#c8a45a',
+  weight: 2,
+  opacity: 0.6,
+  dashArray: '8, 8'
+}).addTo(map);
+
+// Fit bounds
+map.fitBounds(routeCoords.map(c => [c[0], c[1]]), { padding: [40, 40] });
+</script>
+
+</body>
+</html>
