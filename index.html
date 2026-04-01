@@ -27,6 +27,8 @@
   --text-display: #FFFFFF;
   --accent: #D71921;
   --accent-subtle: rgba(215,25,33,0.15);
+  --gold: #C8A45A;
+  --gold-subtle: rgba(200,164,90,0.15);
   --success: #4A9E5C;
   --warning: #D4A843;
   --interactive: #5B9BF6;
@@ -78,7 +80,7 @@ body {
   font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-secondary);
+  color: var(--gold);
   margin-bottom: var(--space-sm);
 }
 
@@ -109,7 +111,7 @@ body {
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text-secondary);
+  color: var(--gold);
   margin-bottom: var(--space-xl);
   opacity: 0;
   animation: fadeIn 0.6s 0.2s var(--ease) forwards;
@@ -153,7 +155,7 @@ body {
   font-family: var(--font-mono);
   font-size: 48px;
   font-weight: 700;
-  color: var(--text-display);
+  color: var(--gold);
   line-height: 1;
 }
 
@@ -184,7 +186,7 @@ body {
   display: block;
   width: 1px;
   height: 32px;
-  background: var(--border-visible);
+  background: var(--gold);
   margin: var(--space-sm) auto 0;
   animation: pulse 2.5s ease-in-out infinite;
 }
@@ -229,13 +231,13 @@ body {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid var(--text-display);
+  border: 2px solid var(--gold);
   background: transparent;
   position: relative;
 }
 .route-stop:first-child .route-stop-dot,
 .route-stop:last-child .route-stop-dot {
-  background: var(--text-display);
+  background: var(--gold);
 }
 .route-stop-name {
   font-family: var(--font-body);
@@ -261,7 +263,8 @@ body {
 .route-connector-line {
   width: 100%;
   height: 1px;
-  background: repeating-linear-gradient(90deg, var(--border-visible) 0, var(--border-visible) 6px, transparent 6px, transparent 12px);
+  background: repeating-linear-gradient(90deg, var(--gold) 0, var(--gold) 6px, transparent 6px, transparent 12px);
+  opacity: 0.4;
 }
 .route-connector-icon {
   font-family: var(--font-mono);
@@ -314,7 +317,7 @@ body {
 .destinations { padding: var(--space-2xl) 0; }
 .dest-block {
   margin-bottom: var(--space-4xl);
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(200,164,90,0.2);
   padding-top: var(--space-2xl);
 }
 .dest-header {
@@ -329,7 +332,7 @@ body {
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-disabled);
+  color: var(--gold);
   margin-bottom: var(--space-xs);
 }
 .dest-name {
@@ -346,8 +349,8 @@ body {
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-visible);
+  color: var(--gold);
+  border: 1px solid rgba(200,164,90,0.3);
   padding: var(--space-xs) var(--space-sm);
   margin-top: var(--space-sm);
 }
@@ -405,7 +408,7 @@ body {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-display);
+  color: var(--accent);
   min-width: 60px;
   flex-shrink: 0;
 }
@@ -605,8 +608,8 @@ body {
   font-size: 9px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  border: 1px solid var(--border-visible);
-  color: var(--text-secondary);
+  border: 1px solid rgba(200,164,90,0.3);
+  color: var(--gold);
   padding: 2px 6px;
   margin-left: auto;
   white-space: nowrap;
@@ -637,7 +640,7 @@ footer .footer-dates {
   font-weight: 700;
   letter-spacing: -0.02em;
   text-transform: none;
-  color: var(--text-display);
+  color: var(--gold);
   margin-bottom: var(--space-sm);
 }
 footer .footer-tagline {
@@ -709,7 +712,7 @@ footer .footer-tagline {
 <!-- ===================== HERO ===================== -->
 <section class="hero">
   <p class="hero-label">Sep 26 — Oct 14, 2026</p>
-  <h1>CHINA<br>PROFUNDA</h1>
+  <h1>CHINA<br><span style="color:var(--accent)">PROFUNDA</span></h1>
   <p class="hero-subtitle">Un viaje al corazon del sureste</p>
   <div class="hero-stats">
     <div class="hero-stat">
