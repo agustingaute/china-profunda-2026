@@ -621,6 +621,176 @@ body {
   .links-grid { grid-template-columns: 1fr; }
 }
 
+/* === PLANNER === */
+.planner-section {
+  padding: var(--space-3xl) 0;
+  border-top: 1px solid var(--border);
+}
+.planner-table-wrap {
+  overflow-x: auto;
+  margin-top: var(--space-lg);
+  border: 1px solid var(--border-visible);
+}
+.planner-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 900px;
+}
+.planner-table thead {
+  background: var(--surface-raised);
+}
+.planner-table th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  padding: var(--space-md);
+  text-align: left;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  background: var(--surface-raised);
+  z-index: 2;
+}
+.planner-table td {
+  padding: var(--space-md);
+  border-top: 1px solid var(--border);
+  color: var(--text-secondary);
+  vertical-align: top;
+  font-weight: 300;
+}
+.planner-table tr:hover td {
+  background: var(--surface-raised);
+}
+.planner-table .col-day {
+  width: 90px;
+  white-space: nowrap;
+}
+.planner-table .col-dest {
+  width: 100px;
+  white-space: nowrap;
+}
+.planner-table .col-guide {
+  width: 280px;
+  color: var(--text-disabled);
+  font-size: 13px;
+}
+.planner-table .col-hotel,
+.planner-table .col-transport {
+  min-width: 200px;
+}
+.planner-day-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  display: block;
+}
+.planner-day-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-disabled);
+  letter-spacing: 0.04em;
+}
+.planner-dest {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.planner-cell-edit {
+  min-height: 40px;
+  padding: var(--space-sm);
+  border: 1px solid transparent;
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+  outline: none;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.5;
+  cursor: text;
+}
+.planner-cell-edit:hover {
+  border-color: var(--border-visible);
+}
+.planner-cell-edit:focus {
+  border-color: var(--gold);
+  background: rgba(200,164,90,0.05);
+}
+.planner-cell-edit:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-disabled);
+  font-style: normal;
+  font-size: 12px;
+  pointer-events: none;
+}
+.planner-cell-edit a {
+  color: var(--interactive);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.planner-cell-edit a:hover {
+  color: var(--text-display);
+}
+.planner-link-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+}
+.planner-link-input {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--border-visible);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 8px;
+  outline: none;
+  transition: border-color 0.2s var(--ease);
+}
+.planner-link-input::placeholder {
+  color: var(--text-disabled);
+}
+.planner-link-input:focus {
+  border-color: var(--gold);
+}
+.planner-saved {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--success);
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+  margin-left: var(--space-md);
+}
+.planner-saved.show {
+  opacity: 1;
+}
+.planner-header-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+.planner-dest-divider td {
+  padding: var(--space-sm) var(--space-md);
+  background: var(--surface);
+  border-top: 1px solid rgba(200,164,90,0.3);
+}
+.planner-dest-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
 /* === FOOTER === */
 footer {
   padding: var(--space-4xl) var(--space-lg) var(--space-3xl);
@@ -1285,6 +1455,296 @@ footer .footer-tagline {
   </div>
 </section>
 
+<!-- ===================== PLANNER ===================== -->
+<section class="planner-section">
+  <div class="container">
+    <div class="planner-header-row">
+      <div>
+        <p class="section-label">Planificador</p>
+        <h2 class="section-title" style="margin-bottom: var(--space-sm);">Dia a dia — hoteles y transporte</h2>
+      </div>
+      <span class="planner-saved" id="planner-saved">Guardado</span>
+    </div>
+    <p style="font-size:13px; color:var(--text-disabled); margin-bottom:var(--space-lg); font-weight:300;">Editable por todos. Hace click en las celdas para cargar hoteles, links y transporte. Los cambios se sincronizan en tiempo real.</p>
+    <div class="planner-table-wrap">
+      <table class="planner-table" id="planner-table">
+        <thead>
+          <tr>
+            <th>Dia</th>
+            <th>Destino</th>
+            <th>Itinerario</th>
+            <th>Hotel / Alojamiento</th>
+            <th>Transporte</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- SHANGHAI -->
+          <tr class="planner-dest-divider"><td colspan="5"><span class="planner-dest-label">Shanghai · 26–29 sept</span></td></tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 01</span><span class="planner-day-date">26 sept</span></td>
+            <td class="col-dest"><span class="planner-dest">Shanghai</span></td>
+            <td class="col-guide">Llegada a Pudong. El Bund de noche.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h1" data-placeholder="Nombre del hotel..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl1" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t1" data-placeholder="Vuelo, transfer..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl1" placeholder="Link (opcional)"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 02</span><span class="planner-day-date">27 sept</span></td>
+            <td class="col-dest"><span class="planner-dest">Shanghai</span></td>
+            <td class="col-guide">French Concession, Tianzifang, Yu Garden.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h2" data-placeholder="Nombre del hotel..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl2" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t2" data-placeholder="Metro, taxi..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl2" placeholder="Link (opcional)"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 03</span><span class="planner-day-date">28 sept</span></td>
+            <td class="col-dest"><span class="planner-dest">Shanghai</span></td>
+            <td class="col-guide">Museo de Shanghai, Xintiandi, Nanjing Road.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h3" data-placeholder="Nombre del hotel..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl3" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t3" data-placeholder="Metro, taxi..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl3" placeholder="Link (opcional)"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 04</span><span class="planner-day-date">29 sept</span></td>
+            <td class="col-dest"><span class="planner-dest">Shanghai</span></td>
+            <td class="col-guide">Dia libre. Tren nocturno a Guiyang ~21h.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h4" data-placeholder="Noche en tren..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl4" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t4" data-placeholder="Tren nocturno Shanghai→Guiyang"></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl4" placeholder="Link ticket tren"></div>
+            </td>
+          </tr>
+
+          <!-- GUIZHOU -->
+          <tr class="planner-dest-divider"><td colspan="5"><span class="planner-dest-label">Guizhou · 30 sept – 5 oct</span></td></tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 05</span><span class="planner-day-date">30 sept</span></td>
+            <td class="col-dest"><span class="planner-dest">Xijiang</span></td>
+            <td class="col-guide">Llegada Guiyang 7am → Xijiang en conductor privado (~3h).</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h5" data-placeholder="Guesthouse Xijiang..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl5" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t5" data-placeholder="Conductor privado"></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl5" placeholder="Link / contacto conductor"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 06</span><span class="planner-day-date">1 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">Xijiang</span></td>
+            <td class="col-guide">Amanecer Xijiang → Longtang → Langde Upper Village.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h6" data-placeholder="Mismo hotel Xijiang..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl6" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t6" data-placeholder="Conductor privado"></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl6" placeholder="Link (opcional)"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 07</span><span class="planner-day-date">2 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">Jiabang</span></td>
+            <td class="col-guide">Xijiang → Jiabang Rice Terraces (~3h). Atardecer dorado.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h7" data-placeholder="Alojamiento Jiabang..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl7" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t7" data-placeholder="Conductor privado"></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl7" placeholder="Link (opcional)"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 08</span><span class="planner-day-date">3 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">Zhaoxing</span></td>
+            <td class="col-guide">Amanecer Jiabang → Zhaoxing Dong Village (~3h).</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h8" data-placeholder="Hotel Zhaoxing..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl8" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t8" data-placeholder="Conductor privado"></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl8" placeholder="Link (opcional)"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 09</span><span class="planner-day-date">4 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">Zhaoxing</span></td>
+            <td class="col-guide">Biasha Miao Village. Tarde libre en Zhaoxing.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h9" data-placeholder="Mismo hotel Zhaoxing..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl9" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t9" data-placeholder="Conductor a Biasha (~1h)"></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl9" placeholder="Link (opcional)"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 10</span><span class="planner-day-date">5 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">→ HK</span></td>
+            <td class="col-guide">Tang'an trek → Congjiang Station → Tren a Hong Kong (~6h).</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h10" data-placeholder="Noche en Hong Kong..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl10" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t10" data-placeholder="Tren Congjiang→Guilin→GZ→HK"></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl10" placeholder="Link ticket tren"></div>
+            </td>
+          </tr>
+
+          <!-- HONG KONG -->
+          <tr class="planner-dest-divider"><td colspan="5"><span class="planner-dest-label">Hong Kong · 5–9 oct</span></td></tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 11</span><span class="planner-day-date">6 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">Hong Kong</span></td>
+            <td class="col-guide">The Peak, Hollywood Road, SoHo, Man Mo Temple.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h11" data-placeholder="Hotel Kowloon / Central..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl11" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t11" data-placeholder="MTR, Peak Tram..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl11" placeholder="Link (opcional)"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 12</span><span class="planner-day-date">7 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">Hong Kong</span></td>
+            <td class="col-guide">Lamma Island o Lantau + Big Buddha.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h12" data-placeholder="Mismo hotel HK..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl12" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t12" data-placeholder="Ferry / Ngong Ping 360..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl12" placeholder="Link (opcional)"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 13</span><span class="planner-day-date">8 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">Hong Kong</span></td>
+            <td class="col-guide">Kowloon profundo. Mong Kok, jade, dim sum.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h13" data-placeholder="Mismo hotel HK..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl13" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t13" data-placeholder="MTR, caminata..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl13" placeholder="Link (opcional)"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 14</span><span class="planner-day-date">9 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">→ Beijing</span></td>
+            <td class="col-guide">Dia comodin. Tren sleeper G897 a Beijing 20:13h.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h14" data-placeholder="Noche en tren sleeper..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl14" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t14" data-placeholder="Tren sleeper G897 HK→Beijing"></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl14" placeholder="Link ticket tren"></div>
+            </td>
+          </tr>
+
+          <!-- BEIJING -->
+          <tr class="planner-dest-divider"><td colspan="5"><span class="planner-dest-label">Beijing · 10–13 oct</span></td></tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 15</span><span class="planner-day-date">10 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">Beijing</span></td>
+            <td class="col-guide">Llegada 7:12am. Hutongs en bici.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h15" data-placeholder="Hotel / hostel Beijing..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl15" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t15" data-placeholder="Llegada en tren, bici..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl15" placeholder="Link (opcional)"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 16</span><span class="planner-day-date">11 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">Beijing</span></td>
+            <td class="col-guide">Ciudad Prohibida + Tiananmen + Parque Jingshan.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h16" data-placeholder="Mismo hotel Beijing..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl16" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t16" data-placeholder="Metro, caminata..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl16" placeholder="Link (opcional)"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 17</span><span class="planner-day-date">12 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">Beijing</span></td>
+            <td class="col-guide">Gran Muralla Mutianyu. Cable car + tobotan.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h17" data-placeholder="Mismo hotel Beijing..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl17" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t17" data-placeholder="Bus / Didi a Mutianyu..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl17" placeholder="Link (opcional)"></div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 18</span><span class="planner-day-date">13 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">→ Shanghai</span></td>
+            <td class="col-guide">Templo del Cielo, 798, Panjiayuan. Tren nocturno.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h18" data-placeholder="Noche en tren..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl18" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t18" data-placeholder="Tren nocturno Beijing→Shanghai"></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl18" placeholder="Link ticket tren"></div>
+            </td>
+          </tr>
+
+          <!-- CIERRE -->
+          <tr class="planner-dest-divider"><td colspan="5"><span class="planner-dest-label">Cierre · 14 oct</span></td></tr>
+          <tr>
+            <td class="col-day"><span class="planner-day-num">Dia 19</span><span class="planner-day-date">14 oct</span></td>
+            <td class="col-dest"><span class="planner-dest">Shanghai</span></td>
+            <td class="col-guide">Dia de cierre. Vuelo madrugada del 15.</td>
+            <td class="col-hotel">
+              <div class="planner-cell-edit" contenteditable="true" data-key="h19" data-placeholder="Ultimo hotel Shanghai..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="hl19" placeholder="Link de reserva (pegar URL)"></div>
+            </td>
+            <td class="col-transport">
+              <div class="planner-cell-edit" contenteditable="true" data-key="t19" data-placeholder="Transfer a Pudong..."></div>
+              <div class="planner-link-row"><input class="planner-link-input" data-key="tl19" placeholder="Link vuelo"></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== FOOTER ===================== -->
 <footer>
   <div class="container">
@@ -1296,6 +1756,9 @@ footer .footer-tagline {
 
 <!-- ===================== SCRIPTS ===================== -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<!-- Firebase SDK for shared planner -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 <script>
 // === ACCORDION ===
 function toggleDay(header) {
@@ -1387,6 +1850,123 @@ L.polyline(routeCoords, {
 }).addTo(map);
 
 map.fitBounds(routeCoords.map(c => [c[0], c[1]]), { padding: [40, 40] });
+
+// === PLANNER (Firebase shared + localStorage fallback) ===
+//
+// SETUP FIREBASE (2 minutos, gratis):
+// 1. Ir a https://console.firebase.google.com
+// 2. "Agregar proyecto" → nombre cualquiera → crear
+// 3. En el panel, ir a "Realtime Database" → "Crear base de datos" → "Iniciar en modo de prueba"
+// 4. Ir a Configuracion del proyecto (engranaje) → "Tus apps" → icono </> (Web)
+//    → registrar app → copiar el objeto firebaseConfig
+// 5. Pegar los valores abajo:
+//
+const FIREBASE_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  projectId: "",
+};
+
+(function() {
+  const STORAGE_KEY = 'china2026-planner';
+  const savedEl = document.getElementById('planner-saved');
+  let saveTimeout;
+  let suppressRemoteUpdate = false;
+
+  const useFirebase = !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.databaseURL);
+  let dbRef = null;
+
+  if (useFirebase) {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    dbRef = firebase.database().ref('planner');
+  }
+
+  function flashSaved(msg) {
+    savedEl.textContent = msg || 'Guardado';
+    savedEl.classList.add('show');
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => savedEl.classList.remove('show'), 1500);
+  }
+
+  function collectData() {
+    const data = {};
+    document.querySelectorAll('.planner-cell-edit').forEach(el => {
+      const key = el.dataset.key;
+      if (key) data[key] = el.innerHTML || '';
+    });
+    document.querySelectorAll('.planner-link-input').forEach(el => {
+      const key = el.dataset.key;
+      if (key) data[key] = el.value || '';
+    });
+    return data;
+  }
+
+  function applyData(data) {
+    if (!data) return;
+    document.querySelectorAll('.planner-cell-edit').forEach(el => {
+      const key = el.dataset.key;
+      if (key && data[key] !== undefined) el.innerHTML = data[key];
+    });
+    document.querySelectorAll('.planner-link-input').forEach(el => {
+      const key = el.dataset.key;
+      if (key && data[key] !== undefined) el.value = data[key];
+    });
+  }
+
+  function savePlanner() {
+    const data = collectData();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    if (useFirebase && dbRef) {
+      suppressRemoteUpdate = true;
+      dbRef.set(data).then(() => {
+        flashSaved('Sincronizado');
+        setTimeout(() => { suppressRemoteUpdate = false; }, 1000);
+      });
+    } else {
+      flashSaved('Guardado local');
+    }
+  }
+
+  function loadPlanner() {
+    if (useFirebase && dbRef) {
+      dbRef.on('value', (snapshot) => {
+        if (suppressRemoteUpdate) return;
+        const data = snapshot.val();
+        if (data) {
+          applyData(data);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+      });
+    } else {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) applyData(JSON.parse(raw));
+    }
+  }
+
+  let debounce;
+  document.querySelectorAll('.planner-cell-edit').forEach(el => {
+    el.addEventListener('input', () => {
+      clearTimeout(debounce);
+      debounce = setTimeout(savePlanner, 800);
+    });
+  });
+  document.querySelectorAll('.planner-link-input').forEach(el => {
+    el.addEventListener('input', () => {
+      clearTimeout(debounce);
+      debounce = setTimeout(savePlanner, 800);
+    });
+  });
+
+  loadPlanner();
+
+  if (!useFirebase) {
+    savedEl.textContent = 'Solo local — configurar Firebase para compartir';
+    savedEl.style.color = 'var(--warning)';
+    savedEl.classList.add('show');
+    savedEl.style.opacity = '0.6';
+  }
+})();
 </script>
 
 </body>
